@@ -7,6 +7,9 @@ import com.example.demo.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class NewsMapper {
     private CategoryService categoryService;
@@ -38,4 +41,21 @@ public class NewsMapper {
         newsDTO.setId(news.getId());
         return newsDTO;
     }
+
+    public List<News> createNewsList(List<NewsDTO> newsDTOS) {
+        List<News> news = new ArrayList<>();
+        for (NewsDTO newsDTO : newsDTOS) {
+             news.add(createNews(newsDTO));
+        }
+        return news;
+    }
+
+    public List<NewsDTO> createNewsDTOList(List<News> newsList) {
+        List<NewsDTO> newsDTOS = new ArrayList<>();
+        for (News news : newsList) {
+            newsDTOS.add(createNewsDTO(news));
+        }
+        return newsDTOS;
+    }
+
 }

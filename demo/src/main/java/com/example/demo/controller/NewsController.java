@@ -1,13 +1,13 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.CategoryDTO;
 import com.example.demo.dto.NewsDTO;
-import com.example.demo.persistence.entity.News;
 import com.example.demo.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/news")
@@ -25,7 +25,7 @@ public class NewsController {
         return newsService.save(newsDTO);
     }
 
-    @GetMapping (path = "/delete/{id}")
+    @DeleteMapping (path = "/delete/{id}")
     public String deleteNews(@PathVariable Long id) {
         return newsService.delete(id);
     }
@@ -40,23 +40,23 @@ public class NewsController {
         }
     }
 
-    @PostMapping(path = "/search/all")
-    public Iterable<News> searchAll() {
+    @GetMapping(path = "/search/all")
+    public List<NewsDTO> searchAll() {
         return newsService.searchByAll();
     }
 
-    @PostMapping(path = "/search/category", consumes = "application/json", produces = "application/json")
-    public Iterable<News> searchByCategory(@RequestBody CategoryDTO categoryDTO) {
-        return newsService.searchByCategory(categoryDTO);
+    @GetMapping(path = "/search/categoryId:{categoryId}")
+    public List<NewsDTO> searchByCategory(@PathVariable Long categoryId) {
+        return newsService.searchByCategory(categoryId);
     }
 
-    @PostMapping(path = "/search/header", consumes = "application/json", produces = "application/json")
-    public NewsDTO searchByHeader(@RequestBody NewsDTO newsDTO) {
-        return newsService.searchByHeader(newsDTO);
+    @GetMapping(path = "/search/header", produces = "application/json")
+    public List<NewsDTO> searchByHeader(@RequestBody String header) {
+        return newsService.searchByHeader(header);
     }
 
-    @PostMapping(path = "/search/body", consumes = "application/json", produces = "application/json")
-    public NewsDTO searchByBody(@RequestBody NewsDTO newsDTO) {
-        return newsService.searchByBody(newsDTO);
+    @GetMapping(path = "/search/body", produces = "application/json")
+    public List<NewsDTO> searchByBody(@RequestBody String body) {
+        return newsService.searchByBody(body);
     }
 }

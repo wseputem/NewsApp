@@ -1,28 +1,24 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.NewsDTO;
-import com.example.demo.dto.CategoryDTO;
 import com.example.demo.mapper.NewsMapper;
-import com.example.demo.persistence.entity.Category;
 import com.example.demo.persistence.entity.News;
 import com.example.demo.persistence.repository.NewsRepository;
-import com.example.demo.persistence.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 
 
 @Service
 public class NewsService {
     private NewsRepository newsRepository;
     private NewsMapper newsMapper;
-    private CategoryRepository categoryRepository;
 
     @Autowired
-    public NewsService(NewsRepository newsRepository, NewsMapper newsMapper, CategoryRepository categoryRepository) {
+    public NewsService(NewsRepository newsRepository, NewsMapper newsMapper) {
         this.newsRepository = newsRepository;
         this.newsMapper = newsMapper;
-        this.categoryRepository = categoryRepository;
     }
 
     public NewsDTO save(NewsDTO newsDTO) {
@@ -50,37 +46,27 @@ public class NewsService {
         }
     }
 
-    public Iterable<News> searchByCategory(CategoryDTO categoryDTO) {
-        Category category = categoryRepository.findById(categoryDTO.getId()).orElse(null);
-        Iterable<News> list = newsRepository.findAllByCategory(category);
-        if (category != null) {
-            return list;
+    public List<NewsDTO> searchByCategory(Long categoryId) {
+        List<News> list = newsRepository.findAllByCategoryId(categoryId);
+        return newsMapper.createNewsDTOList(list);
+    }
+
+    public List<NewsDTO> searchByHeader(String header) {
+        List<News> newsList = newsRepository.findAllByHeader(header);
+        if (newsList != null) {
+            return newsMapper.createNewsDTOList(newsList);
         } else {
             return null;
         }
     }
 
-    public NewsDTO searchByHeader(NewsDTO newsDTO) {
-        News news = newsRepository.findAllByHeader(newsDTO.getHeader());
-        newsDTO = newsMapper.createNewsDTO(news);
-        if (news != null) {
-            return newsDTO;
-        } else {
-            return null;
-        }
+    public List<NewsDTO> searchByBody(String body) {
+        List<News> list = newsRepository.findAllByBody(body);
+        return newsMapper.createNewsDTOList(list);
     }
 
-    public NewsDTO searchByBody(NewsDTO newsDTO) {
-        News news = newsRepository.findAllByBody(newsDTO.getBody());
-        newsDTO = newsMapper.createNewsDTO(news);
-        if (news != null) {
-            return newsDTO;
-        } else {
-            return null;
-        }
-    }
-
-    public Iterable<News> searchByAll() {
-        return newsRepository.findAll();
+    public List<NewsDTO> searchByAll() {
+        List<News> list = newsRepository.findAll();
+        return newsMapper.createNewsDTOList(list);
     }
 }
